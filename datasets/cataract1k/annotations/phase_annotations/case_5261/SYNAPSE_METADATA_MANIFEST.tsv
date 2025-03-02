@@ -1,0 +1,3 @@
+path	parent	name	id	synapseStore	contentType	used	executed	activityName	activityDescription
+/shared/hdd_36T/meecs/datasets/surgery Cataract-1K/Phase_recognition_dataset/annotations/case_5261/case_5261_annotations_phases.csv	syn53395211	case_5261_annotations_phases.csv	syn53395212	True	text/csv				
+/shared/hdd_36T/meecs/datasets/surgery Cataract-1K/Phase_recognition_dataset/annotations/case_5261/case_5261_video.csv	syn53395211	case_5261_video.csv	syn53395213	True	text/csv				

@@ -1,0 +1,16 @@
+caseId,comment,frame,endFrame,sec,endSec
+4863,Incision,0,736,0.0,3.067
+4863,Incision,1644,2968,6.85,12.367
+4863,Viscoelastic,3776,5424,15.733,22.6
+4863,Capsulorhexis,6064,11688,25.267,48.7
+4863,Hydrodissection,12260,18636,51.083,77.65
+4863,Phacoemulsification,19300,61188,80.417,254.95
+4863,Irrigation/Aspiration,63156,73232,263.15,305.133
+4863,Capsule Pulishing,73964,76644,308.183,319.35
+4863,Viscoelastic,77336,78660,322.233,327.75
+4863,Lens Implantation,80016,83376,333.4,347.4
+4863,Lens positioning,84048,86364,350.2,359.85
+4863,Viscoelastic_Suction,87168,93008,363.2,387.533
+4863,Anterior_Chamber Flushing,93672,98080,390.3,408.667
+4863,Viscoelastic_Suction,99236,103496,413.483,431.233
+4863,Tonifying/Antibiotics,104296,106088,434.567,442.033

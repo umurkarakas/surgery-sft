@@ -13,10 +13,9 @@ python data_utils/cut_videos.py
 ```
 
 
-This script processes the original cataract surgery videos by cutting them into smaller segments based on surgical phases. It:
+This script processes the original cataract surgery videos by cutting them into smaller segments of length 2.5 seconds to 7.5 seconds for each surgical phase. It:
 - Reads phase annotations from CSV files
-- Cuts each video into 5-second intervals within each surgical phase
-- Sanitizes filenames to remove problematic characters
+- Cuts each video into 2.5 to 7.5 second intervals within each surgical phase
 - Outputs the segmented videos to the `datasets/cataract1k/videos/` directory
 
 ### 2. Generate Object Information
@@ -24,7 +23,6 @@ This script processes the original cataract surgery videos by cutting them into 
 ```bash
 python data_utils/object_generation.py
 ```
-
 
 This script creates a JSON file mapping each video segment to its corresponding:
 - Surgical phase
@@ -40,9 +38,8 @@ The output is saved as `datasets/cataract1k/case_objects.json`, which serves as 
 python data_utils/qa_generation.py
 ```
 
-
 This script:
-- Uses a large language model (Mistral-Small-24B) to generate question-answer pairs for each video segment
+- Uses a quantized large language model (Mistral-Small-24B) to generate question-answer pairs for each video segment
 - Creates three QA pairs for each segment:
   1. Identifying the current surgical phase
   2. Describing visible anatomical structures
@@ -72,14 +69,12 @@ This script:
 - Reads the train and validation QA pairs to identify which videos belong to each set
 - Moves videos to their respective folders (train, test, val)
 - Any videos not in the train or validation sets are moved to the test folder
-- Prints a summary of how many videos were moved to each folder
 
 ### 6. Train the Model
 
 ```bash
 python train.py
 ```
-
 
 This script:
 - Fine-tunes a Qwen2.5-VL model on the cataract surgery dataset

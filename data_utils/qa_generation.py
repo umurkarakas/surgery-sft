@@ -5,10 +5,29 @@ import re
 import os
 
 def remove_digits(string):
+    """
+    Remove all digits from a string.
+    
+    Args:
+        string (str): Input string containing digits
+        
+    Returns:
+        str: String with all digits removed
+    """
     return re.sub(r'\d+', '', string)
 
 def main():
-    # Initialize LLM
+    """
+    Main function to generate question-answer pairs for cataract surgery videos.
+    
+    This function:
+    1. Initializes a large language model (Mistral-Small-24B)
+    2. Loads case objects containing phase and object information
+    3. Generates prompts for the LLM to create Q&A pairs
+    4. Processes LLM responses into structured JSON format
+    5. Saves the generated Q&A pairs to a JSON file
+    """
+    # Initialize the large language model with appropriate parameters
     llm = LLM("dwetzel/Mistral-Small-24B-Instruct-2501-GPTQ-INT4",
              gpu_memory_utilization=0.8,
              max_num_batched_tokens=32768,
@@ -20,28 +39,41 @@ def main():
              max_seq_len_to_capture=131072,
              enable_prefix_caching=True)
 
+    # Get home path and load case objects
     home_path = os.getenv("HOME")
     with open("datasets/cataract1k/case_objects.json", "r") as f:
         case_objects = json.load(f)
 
+    # Define system prompt for the LLM
     SYSTEM_PROMPT = """You are a vision language model specialized in extracting information from cataract surgery videos.
     Your task is to analyze provided videos and answer the questions based on the inputted cataract surgery videos."""
     videos_path = "datasets/cataract1k/videos/"
 
-    # Generate messages
+    # Generate messages for the LLM
     all_messages = []
     all_videos = []
+    
+    # Process each case and timestamp
     for k, v in case_objects.items():
         for k1, v1 in v.items():
+            # Skip if no video filename is available
             if v1["video_filename"] != None:
+                # Process phase name
                 cur_phase = v1['phase'].lower().replace("_", " ")
                 if cur_phase == "capsule pulishing":
                     cur_phase = "capsule polishing"
+                # Skip idle phases
                 if cur_phase == "idle":
                     continue
+                    
+                # Add video filename to list
                 all_videos.append(v1["video_filename"])
+                
+                # Process segment information
                 cur_segments = ", ".join(segment for segment in set([remove_digits(segment).lower() for segment in v1['objects']]))
                 cur_segments = cur_segments.replace("irrigation-aspiration", "irrigation and aspiration handpieces")
+                
+                # Create prompt for the LLM
                 all_messages.append([
                     {
                         "role": "system",
@@ -92,19 +124,21 @@ def main():
                     },
                 ])
 
-    # Generate responses
+    # Generate responses from the LLM
     outputs = llm.chat(all_messages, sampling_params=SamplingParams(max_tokens=2048, temperature=0.6, repetition_penalty=1.05))    
     responses = [output.outputs[0].text.split("</think>")[-1] for output in outputs]
     cleaned_responses = [json_string.strip('```json\n').strip('```').strip() for json_string in responses]
 
-    # Process responses
+    # Process responses into a dictionary
     responses_dict = dict(zip(range(len(cleaned_responses)), cleaned_responses))
     final_jsons = {}
     
+    # Process responses until all are valid JSON
     while len(responses_dict) != 0:
         cur_copy = responses_dict.copy()
-        for i,resp in cur_copy.items():
+        for i, resp in cur_copy.items():
             try:
+                # Parse JSON and validate structure
                 cur_json = json.loads(resp)
                 assert len(cur_json) == 3
                 assert "question1" in cur_json[0]
@@ -116,12 +150,15 @@ def main():
                 assert "question3" in cur_json[2]
                 assert "answer3" in cur_json[2]
                 assert len(cur_json[1]) == 2
+                
+                # Add video filename to JSON
                 cur_json.insert(0, {"video_filename": all_videos[i] + ".mp4"})
                 final_jsons[i] = cur_json
                 del responses_dict[i]
             except Exception as e:
                 continue
-                
+        
+        # Regenerate responses for invalid JSON
         if responses_dict:
             cur_messages = [all_messages[i] for i in range(len(all_messages)) if i in responses_dict]
             cur_outputs = llm.chat(cur_messages, sampling_params=SamplingParams(max_tokens=2048, temperature=0.6, repetition_penalty=1.05))    
@@ -129,7 +166,7 @@ def main():
             cur_cleaned_responses = [json_string.strip('```json\n').strip('```').strip() for json_string in cur_responses]
             responses_dict = dict(zip(list(responses_dict.keys()), cur_cleaned_responses))
 
-    # Save results
+    # Save results to JSON file
     with open("datasets/cataract1k/qa_pairs_without_idle.json", "w") as f:
         json.dump(list(final_jsons.values()), f)
 

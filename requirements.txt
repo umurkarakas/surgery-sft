@@ -1,0 +1,12 @@
+torch>=2.5.0
+transformers @ git+https://github.com/huggingface/transformers.git
+accelerate>=1.2.0
+peft>=0.14.0
+bitsandbytes>=0.45.0
+trl @ git+https://github.com/huggingface/trl.git
+ffmpeg-python>=0.2.0
+pandas>=2.2.0
+numpy>=1.26.0
+decord>=0.6.0
+qwen-vl-utils[decord]>=0.0.8
+lightning>=2.0.0

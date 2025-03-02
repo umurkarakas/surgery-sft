@@ -160,7 +160,7 @@ def sample_images(vr, sample_fps=8):
     """
     num_frames = vr._num_frame
     # Calculate frame indices to sample based on the target FPS
-    frames_idx = [int(vr.get_avg_fps() / sample_fps)*i for i in range(num_frames // int(vr.get_avg_fps()))] 
+    frames_idx = [int(vr.get_avg_fps() / sample_fps)*i for i in range(sample_fps * num_frames // int(vr.get_avg_fps()))] 
     return vr.get_batch(frames_idx)
 
 def collate_fn(batch):
@@ -233,13 +233,13 @@ def parse_args():
     parser.add_argument("--learning_rate", type=float, default=2e-4, help="Learning rate")
     parser.add_argument("--gradient_accumulation_steps", type=int, default=8, help="Gradient accumulation steps")
     parser.add_argument("--push_to_hub", action="store_true", default=False, help="Push model to HuggingFace Hub")
-    parser.add_argument("--hub_model_id", type=str, default="qwen2.5-7b-instruct-cataract1k", help="Model ID for HuggingFace Hub")
+    parser.add_argument("--hub_model_id", type=str, default="qwen2.5-vl-7b-instruct-cataract1k", help="Model ID for HuggingFace Hub")
     parser.add_argument("--use_qlora", action="store_true", default=True, help="Use QLoRA for training")
     parser.add_argument("--lora_alpha", type=int, default=16, help="LoRA alpha parameter")
     parser.add_argument("--lora_dropout", type=float, default=0.05, help="LoRA dropout rate")
     parser.add_argument("--r", type=int, default=8, help="LoRA rank parameter")
     parser.add_argument("--save_adapter", action="store_true", default=False, help="Save adapter locally")
-    parser.add_argument("--save_dir", type=str, default="./qwen2.5-7b-instruct-cataract1k", help="Directory to save adapter")
+    parser.add_argument("--save_dir", type=str, default="./qwen2.5-vl-7b-instruct-cataract1k", help="Directory to save adapter")
     return parser.parse_args()
 
 def main():
@@ -298,7 +298,7 @@ def main():
     os.environ["WORLD_SIZE"] = "1"
     os.environ["MASTER_ADDR"] = "localhost"
     os.environ["MASTER_PORT"] = "12355"
-    os.environ["CUDA_VISIBLE_DEVICES"] = "0,1,2,3"  # Use 4 GPUs
+    os.environ["CUDA_VISIBLE_DEVICES"] = "0"
     
     # Configure training arguments using SFTConfig
     training_args = SFTConfig(

@@ -147,7 +147,7 @@ Provide clear, concise answers."""
         },
     ]
 
-def sample_images(vr, sample_fps=8):
+def sample_images(vr, sample_fps=2):
     """
     Sample frames from a video at a specified frame rate.
     
@@ -229,7 +229,7 @@ def parse_args():
                         default="datasets/cataract1k/videos/val", 
                         help="Path to validation video directory")
     parser.add_argument("--batch_size", type=int, default=4, help="Batch size for training")
-    parser.add_argument("--num_epochs", type=int, default=1, help="Number of training epochs")
+    parser.add_argument("--num_epochs", type=int, default=2, help="Number of training epochs")
     parser.add_argument("--learning_rate", type=float, default=2e-4, help="Learning rate")
     parser.add_argument("--gradient_accumulation_steps", type=int, default=8, help="Gradient accumulation steps")
     parser.add_argument("--push_to_hub", action="store_true", default=False, help="Push model to HuggingFace Hub")

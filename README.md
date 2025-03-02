@@ -136,7 +136,7 @@ The training scripts support various command line arguments to customize the tra
 python train.py --model_id "Qwen/Qwen2.5-VL-7B-Instruct" --batch_size 4 --num_epochs 1 --learning_rate 2e-4
 
 # For LLaVA-NeXT-Video
-python train_llava.py --model_id "llava-hf/LLaVa-NeXT-Video-7b-hf" --batch_size 1 --num_epochs 1 --learning_rate 2e-4
+python train_llava.py --model_id "llava-hf/LLaVa-NeXT-Video-7b-hf" --batch_size 1 --num_epochs 1 --learning_rate 2e-5
 ```
 
 ### Available Arguments:
@@ -150,8 +150,8 @@ python train_llava.py --model_id "llava-hf/LLaVa-NeXT-Video-7b-hf" --batch_size 
 | `--val_data_path` | "datasets/cataract1k/val_qa_pairs.json" | "datasets/cataract1k/val_qa_pairs.json" | Path to validation data JSON file |
 | `--val_video_dir` | "datasets/cataract1k/videos/val" | "datasets/cataract1k/videos/val" | Path to validation video directory |
 | `--batch_size` | 4 | 1 | Batch size for training and evaluation |
-| `--num_epochs` | 1 | 1 | Number of training epochs |
-| `--learning_rate` | 2e-4 | 2e-4 | Learning rate for optimization |
+| `--num_epochs` | 2 | 1 | Number of training epochs |
+| `--learning_rate` | 2e-4 | 2e-5 | Learning rate for optimization |
 | `--gradient_accumulation_steps` | 8 | 8 | Number of steps to accumulate gradients before updating weights |
 | `--push_to_hub` | False | False | Whether to push the model to HuggingFace Hub after training |
 | `--hub_model_id` | "qwen2.5-vl-7b-instruct-cataract1k" | "llava-next-video-7b-cataract1k" | Model ID for HuggingFace Hub when pushing |

@@ -10,3 +10,5 @@ numpy>=1.26.0
 decord>=0.6.0
 qwen-vl-utils[decord]>=0.0.8
 lightning>=2.0.0
+vllm==0.6.6.post1
+imageio==2.37.0

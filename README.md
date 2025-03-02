@@ -110,11 +110,34 @@ This script:
 
 ## Command Line Arguments
 
-The training script supports various command line arguments:
+The training script supports various command line arguments to customize the training process:
 
 ```bash
 python train.py --model_id "Qwen/Qwen2.5-VL-7B-Instruct" --batch_size 4 --num_epochs 1 --learning_rate 2e-4
 ```
+
+### Available Arguments:
+
+| Argument | Default | Description |
+|----------|---------|-------------|
+| `--model_id` | "Qwen/Qwen2.5-VL-7B-Instruct" | Base model ID to use from Hugging Face |
+| `--hf_token` | None | HuggingFace token for accessing gated models and pushing to Hub |
+| `--train_data_path` | "datasets/cataract1k/train_qa_pairs.json" | Path to training data JSON file |
+| `--train_video_dir` | "datasets/cataract1k/videos/train" | Path to training video directory |
+| `--val_data_path` | "datasets/cataract1k/val_qa_pairs.json" | Path to validation data JSON file |
+| `--val_video_dir` | "datasets/cataract1k/videos/val" | Path to validation video directory |
+| `--batch_size` | 4 | Batch size for training and evaluation |
+| `--num_epochs` | 1 | Number of training epochs |
+| `--learning_rate` | 2e-4 | Learning rate for optimization |
+| `--gradient_accumulation_steps` | 8 | Number of steps to accumulate gradients before updating weights |
+| `--push_to_hub` | False | Whether to push the model to HuggingFace Hub after training |
+| `--hub_model_id` | "qwen2.5-7b-instruct-cataract1k" | Model ID for HuggingFace Hub when pushing |
+| `--use_qlora` | True | Whether to use QLoRA for efficient fine-tuning |
+| `--lora_alpha` | 16 | LoRA alpha parameter (scaling factor) |
+| `--lora_dropout` | 0.05 | Dropout probability for LoRA layers |
+| `--r` | 8 | LoRA rank parameter (lower means fewer parameters) |
+| `--save_adapter` | False | Whether to save the adapter locally |
+| `--save_dir` | "./qwen2.5-7b-instruct-cataract1k" | Directory to save the adapter if `save_adapter` is True |
 
 For a full list of available arguments, run:
 

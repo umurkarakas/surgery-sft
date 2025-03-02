@@ -1,6 +1,6 @@
 # Surgery-SFT: Cataract Surgery Video Analysis
 
-This repository contains tools for processing cataract surgery videos, generating question-answer pairs, and fine-tuning a vision-language model (Qwen2.5-VL) to analyze surgical procedures.
+This repository contains the code for my Applied Deep Learning (Winter Semester 24/25) Course Project at Ludwig Maximilian University of Munich. The project focuses on processing cataract surgery videos, generating question-answer pairs, and fine-tuning a vision-language model (Qwen2.5-VL) to analyze surgical procedures.
 
 ## Data Processing Pipeline
 
@@ -11,7 +11,6 @@ Follow these steps in order to prepare the dataset and train the model:
 ```bash
 python data_utils/cut_videos.py
 ```
-
 
 This script processes the original cataract surgery videos by cutting them into smaller segments of length 2.5 seconds to 7.5 seconds for each surgical phase. It:
 - Reads phase annotations from CSV files

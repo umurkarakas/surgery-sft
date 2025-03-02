@@ -68,8 +68,27 @@ This script:
 - Reads the train and validation QA pairs to identify which videos belong to each set
 - Moves videos to their respective folders (train, test, val)
 - Any videos not in the train or validation sets are moved to the test folder
+- 
+## Final Dataset Structure
 
-### 6. Train the Model
+The dataset should be organized as follows before starting to finetune the model:
+
+```bash
+datasets/
+└── cataract1k/
+├── annotations/
+│ ├── phase_annotations/
+│ └── segment_annotations/
+├── videos/
+│ ├── train/
+│ ├── test/
+│ └── val/
+├── case_objects.json
+├── qa_pairs_without_idle.json
+├── train_qa_pairs.json
+└── val_qa_pairs.json
+```
+## Fine-tune the Model
 
 ```bash
 python train.py
@@ -95,26 +114,6 @@ For a full list of available arguments, run:
 
 ```bash
 python train.py --help
-```
-
-## Dataset Structure
-
-The dataset should be organized as follows:
-
-```bash
-datasets/
-└── cataract1k/
-├── annotations/
-│ ├── phase_annotations/
-│ └── segment_annotations/
-├── videos/
-│ ├── train/
-│ ├── test/
-│ └── val/
-├── case_objects.json
-├── qa_pairs_without_idle.json
-├── train_qa_pairs.json
-└── val_qa_pairs.json
 ```
 
 

@@ -96,53 +96,78 @@ datasets/
 ```
 ## Fine-tune the Model
 
+The repository provides two training scripts for fine-tuning different vision-language models on the cataract surgery dataset:
+
+### 1. Fine-tune Qwen2.5-VL
+
 ```bash
 python train.py
 ```
 
-This script:
-- Fine-tunes a Qwen2.5-VL model on the cataract surgery dataset
-- Uses QLoRA (Quantized Low-Rank Adaptation) for efficient training
-- Processes videos using the Decord library to extract frames
-- Formats the data as a multi-turn conversation with system, user, and assistant messages
-- Trains the model to answer questions about surgical phases, instruments, and anatomical structures
-- Supports pushing the trained model to Hugging Face Hub
+This script fine-tunes the Qwen2.5-VL model using the dependencies specified in `requirements.txt`.
+
+### 2. Fine-tune LLaVA-NeXT-Video
+
+```bash
+# First install the required version of transformers
+pip install transformers==4.48.0
+
+# Then run the training script
+python train_llava.py
+```
+
+Note: LLaVA-NeXT-Video specifically requires `transformers==4.48.0`, which differs from the version used for Qwen2.5-VL. Make sure to install this specific version before running the LLaVA training script.
+
+### Common Features of Both Training Scripts
+
+Both scripts:
+- Use QLoRA (Quantized Low-Rank Adaptation) for efficient training
+- Process videos using the Decord library to extract frames
+- Format the data as a multi-turn conversation with system, user, and assistant messages
+- Train the model to answer questions about surgical phases, instruments, and anatomical structures
+- Support pushing the trained model to Hugging Face Hub
 
 ## Command Line Arguments
 
-The training script supports various command line arguments to customize the training process:
+The training scripts support various command line arguments to customize the training process:
 
 ```bash
+# For Qwen2.5-VL
 python train.py --model_id "Qwen/Qwen2.5-VL-7B-Instruct" --batch_size 4 --num_epochs 1 --learning_rate 2e-4
+
+# For LLaVA-NeXT-Video
+python train_llava.py --model_id "llava-hf/LLaVa-NeXT-Video-7b-hf" --batch_size 1 --num_epochs 1 --learning_rate 2e-4
 ```
 
 ### Available Arguments:
 
-| Argument | Default | Description |
-|----------|---------|-------------|
-| `--model_id` | "Qwen/Qwen2.5-VL-7B-Instruct" | Base model ID to use from Hugging Face |
-| `--hf_token` | None | HuggingFace token for accessing gated models and pushing to Hub |
-| `--train_data_path` | "datasets/cataract1k/train_qa_pairs.json" | Path to training data JSON file |
-| `--train_video_dir` | "datasets/cataract1k/videos/train" | Path to training video directory |
-| `--val_data_path` | "datasets/cataract1k/val_qa_pairs.json" | Path to validation data JSON file |
-| `--val_video_dir` | "datasets/cataract1k/videos/val" | Path to validation video directory |
-| `--batch_size` | 4 | Batch size for training and evaluation |
-| `--num_epochs` | 1 | Number of training epochs |
-| `--learning_rate` | 2e-4 | Learning rate for optimization |
-| `--gradient_accumulation_steps` | 8 | Number of steps to accumulate gradients before updating weights |
-| `--push_to_hub` | False | Whether to push the model to HuggingFace Hub after training |
-| `--hub_model_id` | "qwen2.5-7b-instruct-cataract1k" | Model ID for HuggingFace Hub when pushing |
-| `--use_qlora` | True | Whether to use QLoRA for efficient fine-tuning |
-| `--lora_alpha` | 16 | LoRA alpha parameter (scaling factor) |
-| `--lora_dropout` | 0.05 | Dropout probability for LoRA layers |
-| `--r` | 8 | LoRA rank parameter (lower means fewer parameters) |
-| `--save_adapter` | False | Whether to save the adapter locally |
-| `--save_dir` | "./qwen2.5-7b-instruct-cataract1k" | Directory to save the adapter if `save_adapter` is True |
+| Argument | Default (Qwen) | Default (LLaVA) | Description |
+|----------|----------------|-----------------|-------------|
+| `--model_id` | "Qwen/Qwen2.5-VL-7B-Instruct" | "llava-hf/LLaVa-NeXT-Video-7b-hf" | Base model ID to use from Hugging Face |
+| `--hf_token` | None | None | HuggingFace token for accessing gated models and pushing to Hub |
+| `--train_data_path` | "datasets/cataract1k/train_qa_pairs.json" | "datasets/cataract1k/train_qa_pairs.json" | Path to training data JSON file |
+| `--train_video_dir` | "datasets/cataract1k/videos/train" | "datasets/cataract1k/videos/train" | Path to training video directory |
+| `--val_data_path` | "datasets/cataract1k/val_qa_pairs.json" | "datasets/cataract1k/val_qa_pairs.json" | Path to validation data JSON file |
+| `--val_video_dir` | "datasets/cataract1k/videos/val" | "datasets/cataract1k/videos/val" | Path to validation video directory |
+| `--batch_size` | 4 | 1 | Batch size for training and evaluation |
+| `--num_epochs` | 1 | 1 | Number of training epochs |
+| `--learning_rate` | 2e-4 | 2e-4 | Learning rate for optimization |
+| `--gradient_accumulation_steps` | 8 | 8 | Number of steps to accumulate gradients before updating weights |
+| `--push_to_hub` | False | False | Whether to push the model to HuggingFace Hub after training |
+| `--hub_model_id` | "qwen2.5-vl-7b-instruct-cataract1k" | "llava-next-video-7b-cataract1k" | Model ID for HuggingFace Hub when pushing |
+| `--use_qlora` | True | True | Whether to use QLoRA for efficient fine-tuning |
+| `--lora_alpha` | 16 | 8 | LoRA alpha parameter (scaling factor) |
+| `--lora_dropout` | 0.05 | 0.1 | Dropout probability for LoRA layers |
+| `--r` | 8 | 8 | LoRA rank parameter (lower means fewer parameters) |
+| `--save_adapter` | False | False | Whether to save the adapter locally |
+| `--save_dir` | "./qwen2.5-vl-7b-instruct-cataract1k" | "./llava-next-video-7b-cataract1k" | Directory to save the adapter if `save_adapter` is True |
 
 For a full list of available arguments, run:
 
 ```bash
 python train.py --help
+# or
+python train_llava.py --help
 ```
 
 

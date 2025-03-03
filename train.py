@@ -235,9 +235,9 @@ def parse_args():
     parser.add_argument("--push_to_hub", action="store_true", default=False, help="Push model to HuggingFace Hub")
     parser.add_argument("--hub_model_id", type=str, default="qwen2.5-vl-7b-instruct-cataract1k", help="Model ID for HuggingFace Hub")
     parser.add_argument("--use_qlora", action="store_true", default=True, help="Use QLoRA for training")
-    parser.add_argument("--lora_alpha", type=int, default=16, help="LoRA alpha parameter")
+    parser.add_argument("--lora_alpha", type=int, default=32, help="LoRA alpha parameter")
     parser.add_argument("--lora_dropout", type=float, default=0.05, help="LoRA dropout rate")
-    parser.add_argument("--r", type=int, default=8, help="LoRA rank parameter")
+    parser.add_argument("--r", type=int, default=32, help="LoRA rank parameter")
     parser.add_argument("--save_adapter", action="store_true", default=False, help="Save adapter locally")
     parser.add_argument("--save_dir", type=str, default="./qwen2.5-vl-7b-instruct-cataract1k", help="Directory to save adapter")
     return parser.parse_args()
@@ -310,12 +310,12 @@ def main():
         gradient_checkpointing=True,  # Enable gradient checkpointing to save memory
         optim="adamw_torch_fused",  # Use fused AdamW optimizer for better performance
         learning_rate=args.learning_rate,  # Learning rate
-        lr_scheduler_type="constant",  # Use constant learning rate
+        lr_scheduler_type="cosine",  # Use cosine learning rate
         logging_steps=10,  # Log metrics every 10 steps
         eval_steps=10,  # Evaluate every 10 steps
         eval_strategy="steps",  # Evaluate based on steps, not epochs
         save_strategy="steps",  # Save based on steps, not epochs
-        save_steps=10,  # Save checkpoint every 10 steps
+        save_steps=100,  # Save checkpoint every 10 steps
         metric_for_best_model="eval_loss",  # Use evaluation loss to determine best model
         greater_is_better=False,  # Lower loss is better
         load_best_model_at_end=True,  # Load the best model at the end of training

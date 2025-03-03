@@ -162,7 +162,8 @@ def sample_images(vr, sample_fps=2):
     # Calculate frame indices to sample based on the target FPS
     frames_idx = [int(vr.get_avg_fps() / sample_fps)*i for i in range(sample_fps * num_frames // int(vr.get_avg_fps()))] 
     return vr.get_batch(frames_idx)
-
+    
+    
 def collate_fn(batch):
     vrs, _, examples = zip(*batch)
 
@@ -233,9 +234,9 @@ def parse_args():
     parser.add_argument("--push_to_hub", action="store_true", default=False, help="Push model to HuggingFace Hub")
     parser.add_argument("--hub_model_id", type=str, default="llava-next-video-7b-cataract1k", help="Model ID for HuggingFace Hub")
     parser.add_argument("--use_qlora", action="store_true", default=True, help="Use QLoRA for training")
-    parser.add_argument("--lora_alpha", type=int, default=8, help="LoRA alpha parameter")
+    parser.add_argument("--lora_alpha", type=int, default=32, help="LoRA alpha parameter")
     parser.add_argument("--lora_dropout", type=float, default=0.1, help="LoRA dropout rate")
-    parser.add_argument("--r", type=int, default=8, help="LoRA rank parameter")
+    parser.add_argument("--r", type=int, default=32, help="LoRA rank parameter")
     parser.add_argument("--save_adapter", action="store_true", default=False, help="Save adapter locally")
     parser.add_argument("--save_dir", type=str, default="./llava-next-video-7b-cataract1k", help="Directory to save adapter")
     return parser.parse_args()
@@ -322,15 +323,14 @@ def main():
         gradient_checkpointing=True,  # Enable gradient checkpointing to save memory
         optim="adamw_torch_fused",  # Use fused AdamW optimizer for better performance
         learning_rate=args.learning_rate,  # Learning rate
-        lr_scheduler_type="constant",  # Use constant learning rate
+        lr_scheduler_type="cosine",  # Use cosine learning rate
         logging_steps=10,  # Log metrics every 10 steps
         save_strategy="steps",  # Save based on steps, not epochs
-        save_steps=10,  # Save checkpoint every 10 steps
-        greater_is_better=False,  # Lower loss is better
+        save_steps=125,  # Save checkpoint every 10 steps
         bf16=True,  # Use bfloat16 precision
         tf32=True,  # Use TensorFloat-32 precision on Ampere GPUs
-        max_grad_norm=0.3,  # Clip gradients to prevent exploding gradients
-        warmup_ratio=0.03,  # Warm up learning rate for 3% of training steps
+        # max_grad_norm=0.3,  # Clip gradients to prevent exploding gradients
+        warmup_ratio=0.01,  # Warm up learning rate for 3% of training steps
         push_to_hub=args.push_to_hub,  # Whether to push model to HuggingFace Hub
         push_to_hub_token=args.hf_token,  # HuggingFace token for pushing to Hub
         push_to_hub_model_id=args.hub_model_id,  # Model ID for HuggingFace Hub
@@ -346,6 +346,7 @@ def main():
         model=model,  # The model to train
         args=training_args,  # Training arguments
         train_dataset=train_dataset,  # Training dataset
+        eval_dataset=val_dataset,
         data_collator=collate_fn,  # Custom collate function
         peft_config=lora_config,  # LoRA configuration
         processing_class=processor.tokenizer,  # Tokenizer for processing text

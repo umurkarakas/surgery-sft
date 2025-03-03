@@ -89,17 +89,17 @@ The dataset should be organized as follows before starting to finetune the model
 ```bash
 datasets/
 └── cataract1k/
-├── annotations/
-│ ├── phase_annotations/
-│ └── segment_annotations/
-├── videos/
-│ ├── train/
-│ ├── test/
-│ └── val/
-├── case_objects.json
-├── qa_pairs_without_idle.json
-├── train_qa_pairs.json
-└── val_qa_pairs.json
+    ├── annotations/
+    │   ├── phase_annotations/
+    │   └── segment_annotations/
+    ├── videos/
+    │   ├── train/
+    │   ├── test/
+    │   └── val/
+    ├── case_objects.json
+    ├── qa_pairs_without_idle.json
+    ├── train_qa_pairs.json
+    └── val_qa_pairs.json
 ```
 ## Fine-tune the Model
 

@@ -100,7 +100,7 @@ This script:
 - Creates train, test, and validation directories
 - Reads the train and validation QA pairs to identify which videos belong to each set
 - Moves videos to their respective folders (train, test, val)
-- Any videos not in the train or validation sets are moved to the test folder
+- Any videos that do not have segment labels (which are also not in train and validation sets) are moved to the test folder
 
 ## Final Dataset Structure
 
@@ -188,7 +188,7 @@ python train_llava.py --model_id "llava-hf/LLaVa-NeXT-Video-7b-hf" --batch_size 
 | `--use_qlora` | True | True | Whether to use QLoRA for efficient fine-tuning |
 | `--lora_alpha` | 32 | 32 | LoRA alpha parameter (scaling factor) |
 | `--lora_dropout` | 0.05 | 0.1 | Dropout probability for LoRA layers |
-| `--r` | 8 | 8 | LoRA rank parameter (lower means fewer parameters) |
+| `--r` | 32 | 32 | LoRA rank parameter (lower means fewer parameters) |
 | `--save_adapter` | False | False | Whether to save the adapter locally |
 | `--save_dir` | "./qwen2.5-vl-7b-instruct-cataract1k" | "./llava-next-video-7b-cataract1k" | Directory to save the adapter if `save_adapter` is True |
 

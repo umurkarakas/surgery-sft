@@ -76,7 +76,7 @@ def cut_video(video_file, output_folder, phase, start_time, end_time):
 if __name__ == "__main__":
     # Define paths for data processing
     data_folder = "datasets/cataract1k/annotations/"
-    video_folder = "cataract1k/surgery Cataract-1K/Phase_recognition_dataset/"
+    video_folder = "surgery Cataract-1K/Phase_recognition_dataset/"
     output_folder = "datasets/cataract1k/videos/"
     annotations_dir = os.path.join(data_folder, "phase_annotations")
     

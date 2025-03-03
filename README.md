@@ -13,13 +13,33 @@ The following fine-tuned models are available on the Hugging Face Hub:
 
 Follow these steps in order to prepare the dataset and train the model:
 
-### 1. Install Required Packages
+### 1. Download and Install the Dataset
+
+First, download the Cataract-1K dataset from Dropbox:
+- [Download Cataract-1K Dataset (reshaped into 224x224 videos)](https://www.dropbox.com/scl/fi/5ybj7gd07hd38x1pezwdr/surgery-Cataract-1K.zip?rlkey=42wja3aptub866l487k2dhfmm&dl=0)
+
+Extract the downloaded zip file in the base directory of this repository. The phase and segment annotations are retrieved with cloning the repository. The initial structure of the datasets should look like:
+
+```bash
+surgery-sft/
+├── datasets/
+│   └── cataract1k/
+│       ├── annotations/
+│       │   ├── phase_annotations/
+│       │   └── segment_annotations/
+│       └── videos/
+└── surgery-Cataract-1K/
+    └── Phase_recognition_dataset/
+        └── videos_224/
+```
+
+### 2. Install Required Packages
 
 ```bash
 pip install -r requirements.txt
 ```
 
-### 2. Cut Videos into Segments
+### 3. Cut Videos into Segments
 
 ```bash
 python data_utils/cut_videos.py
@@ -30,7 +50,7 @@ This script processes the original cataract surgery videos by cutting them into 
 - Cuts each video into 2.5 to 7.5 second intervals within each surgical phase
 - Outputs the segmented videos to the `datasets/cataract1k/videos/` directory
 
-### 3. Generate Object Information
+### 4. Generate Object Information
 
 ```bash
 python data_utils/object_generation.py
@@ -44,7 +64,7 @@ This script creates a JSON file mapping each video segment to its corresponding:
 
 The output is saved as `datasets/cataract1k/case_objects.json`, which serves as the foundation for generating question-answer pairs.
 
-### 4. Generate Question-Answer Pairs
+### 5. Generate Question-Answer Pairs
 
 ```bash
 python data_utils/qa_generation.py
@@ -59,7 +79,7 @@ This script:
 - Formats the output as structured JSON
 - Saves the results to `datasets/cataract1k/qa_pairs_without_idle.json`
 
-### 5. Split Dataset into Train/Validation Sets
+### 6. Split Dataset into Train/Validation Sets
 
 ```bash
 python data_utils/split_dataset.py
@@ -70,7 +90,7 @@ This script:
 - Uses a fixed random seed (42) for reproducibility
 - Saves the splits as `train_qa_pairs.json` and `val_qa_pairs.json` in the `datasets/cataract1k/` directory
 
-### 6. Organize Videos into Train/Test/Validation Folders
+### 7. Organize Videos into Train/Test/Validation Folders
 
 ```bash
 python data_utils/organize_videos.py
@@ -87,20 +107,23 @@ This script:
 The dataset should be organized as follows before starting to finetune the model:
 
 ```bash
-datasets/
-└── cataract1k/
-    ├── annotations/
-    │   ├── phase_annotations/
-    │   └── segment_annotations/
-    ├── videos/
-    │   ├── train/
-    │   ├── test/
-    │   └── val/
-    ├── case_objects.json
-    ├── qa_pairs_without_idle.json
-    ├── train_qa_pairs.json
-    └── val_qa_pairs.json
+surgery-sft/
+├── datasets/
+│   └── cataract1k/
+│       ├── annotations/
+│       │   ├── phase_annotations/
+│       │   └── segment_annotations/
+│       ├── videos/
+│       │   ├── train/
+│       │   ├── test/
+│       │   └── val/
+│       ├── case_objects.json
+│       ├── qa_pairs_without_idle.json
+│       ├── train_qa_pairs.json
+│       └── val_qa_pairs.json
+└── surgery-Cataract-1K/  # Original dataset directory
 ```
+
 ## Fine-tune the Model
 
 The repository provides two training scripts for fine-tuning different vision-language models on the cataract surgery dataset:

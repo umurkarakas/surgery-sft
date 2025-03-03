@@ -230,7 +230,7 @@ def parse_args():
                         help="Path to validation video directory")
     parser.add_argument("--batch_size", type=int, default=4, help="Batch size for training")
     parser.add_argument("--num_epochs", type=int, default=2, help="Number of training epochs")
-    parser.add_argument("--learning_rate", type=float, default=2e-4, help="Learning rate")
+    parser.add_argument("--learning_rate", type=float, default=2e-5, help="Learning rate")
     parser.add_argument("--gradient_accumulation_steps", type=int, default=8, help="Gradient accumulation steps")
     parser.add_argument("--push_to_hub", action="store_true", default=False, help="Push model to HuggingFace Hub")
     parser.add_argument("--hub_model_id", type=str, default="qwen2.5-vl-7b-instruct-cataract1k", help="Model ID for HuggingFace Hub")

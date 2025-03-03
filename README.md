@@ -2,6 +2,13 @@
 
 This repository contains the code for my Applied Deep Learning (Winter Semester 24/25) Course Project at Ludwig Maximilian University of Munich. The project focuses on processing cataract surgery videos, generating question-answer pairs, and fine-tuning a vision-language model (Qwen2.5-VL) to analyze surgical procedures.
 
+## Trained Models
+
+The following fine-tuned models are available on the Hugging Face Hub:
+
+- [Qwen2.5-VL-7B-Instruct-Cataract1K](https://huggingface.co/kida1122/qwen2.5-vl-7b-instruct-cataract1k): Fine-tuned Qwen2.5-VL model for cataract surgery video analysis
+- [LLaVA-NeXT-Video-7B-Cataract1K](https://huggingface.co/kida1122/llava-next-video-7b-cataract1k): Fine-tuned LLaVA-NeXT-Video model for cataract surgery video analysis
+
 ## Data Processing Pipeline
 
 Follow these steps in order to prepare the dataset and train the model:

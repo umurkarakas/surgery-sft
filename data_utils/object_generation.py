@@ -77,6 +77,8 @@ def main():
         for ann in inst_json["annotations"]:
             # Get image name and calculate timestamp in seconds
             image_name = image_id_to_name[ann["image_id"]]
+            if int(image_name.split("_")[-1].split(".")[0]) == 2:
+                continue
             image_seconds = max(0, int(image_name.split("_")[-1].split(".")[0])-2) * 5
             
             # Initialize timestamp entry if not present
@@ -104,7 +106,7 @@ def main():
                 
             # Add object to the list
             case_objects[case][image_seconds]["objects"].append(
-                category_id_to_name[ann["category_id"]]
+                {"area": ann["area"], "bbox": ann["bbox"], "object_name": category_id_to_name[ann["category_id"]]}
             )
             
             # Find and store the video filename containing this timestamp

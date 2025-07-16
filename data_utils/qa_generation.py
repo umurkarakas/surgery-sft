@@ -28,11 +28,11 @@ def main():
     5. Saves the generated Q&A pairs to a JSON file
     """
     # Initialize the large language model with appropriate parameters
-    llm = LLM("dwetzel/Mistral-Small-24B-Instruct-2501-GPTQ-INT4",
-             gpu_memory_utilization=0.8,
+    llm = LLM("Valdemardi/DeepSeek-R1-Distill-Qwen-32B-AWQ",
+             gpu_memory_utilization=0.9,
              max_num_batched_tokens=32768,
              max_num_seqs=512,
-             max_model_len=32768,
+             max_model_len=32768*4,
              dtype="bfloat16",
              enforce_eager=False,
              enable_chunked_prefill=True,
@@ -70,7 +70,8 @@ def main():
                 all_videos.append(v1["video_filename"])
                 
                 # Process segment information
-                cur_segments = ", ".join(segment for segment in set([remove_digits(segment).lower() for segment in v1['objects']]))
+                #cur_segments = ", ".join(segment for segment in set([remove_digits(segment).lower() for segment in v1['objects']]))
+                cur_segments = json.dumps(v1["objects"])
                 cur_segments = cur_segments.replace("irrigation-aspiration", "irrigation and aspiration handpieces")
                 
                 # Create prompt for the LLM
@@ -78,12 +79,13 @@ def main():
                     {
                         "role": "system",
                         "content": """You are a helpful assistant that is expert in cataract surgery videos.
-                        Assume that you are given a cataract surgery video that is in the given phase and contains the given anatomical structures and instruments.
+                        Assume that you are given a cataract surgery video that is in the given phase and contains the given anatomical structures and instruments with their corresponding areas and bounding boxes.
                         Your task is to write me question answer pairs. 
                         <rules>
                         The first question & answer pair is about which phase of the surgery are we currently at.
-                        The second question & answer pair is about the visible anatomical structures in the current video, using the input.
-                        The third question & answer pair is about the visible surgical instruments in the current video, using the input.
+                        The second question & answer pair is about the names of the visible anatomical structures in the current video, using the input.
+                        The third question & answer pair is about the names of the visible surgical instruments in the current video, using the input.
+                        The fourth question & answer pair is the spatial relation between the objects in the video, which you should infer from area and bounding box values of the objects.
                         From visible segments, figure out what the surgery instruments and the anatomical structures are and classify them accordingly in the answer and give a structured full sentence answer, explaining which segment is an anatomical structure and which segment is an instrument.
                         Do not give single word answers in JSON.
                         Give me your response as a JSON, with the following format:
@@ -92,7 +94,9 @@ def main():
                         {"question2": "",
                         "answer2": ""}
                         {"question3": "",
-                        "answer3": ""},]
+                        "answer3": ""},
+                        {"question4": "",
+                        "answer4": ""}]
                         
                         Do not give me explanation or summary, I only need a single JSON.
                         </rules>
@@ -123,7 +127,7 @@ def main():
                         """
                     },
                 ])
-
+    print("len(all_messages): ", len(all_messages))
     # Generate responses from the LLM
     outputs = llm.chat(all_messages, sampling_params=SamplingParams(max_tokens=2048, temperature=0.6, repetition_penalty=1.05))    
     responses = [output.outputs[0].text.split("</think>")[-1] for output in outputs]
@@ -140,7 +144,7 @@ def main():
             try:
                 # Parse JSON and validate structure
                 cur_json = json.loads(resp)
-                assert len(cur_json) == 3
+                assert len(cur_json) == 4
                 assert "question1" in cur_json[0]
                 assert "answer1" in cur_json[0]
                 assert len(cur_json[0]) == 2
@@ -149,6 +153,9 @@ def main():
                 assert len(cur_json[1]) == 2
                 assert "question3" in cur_json[2]
                 assert "answer3" in cur_json[2]
+                assert len(cur_json[1]) == 2
+                assert "question4" in cur_json[3]
+                assert "answer4" in cur_json[3]
                 assert len(cur_json[1]) == 2
                 
                 # Add video filename to JSON
